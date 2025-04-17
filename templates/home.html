@@ -2,10 +2,28 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Главная страница</title>
+    <title>Думали тут будет приветсвие?</title>
+    <title>Список работ</title>
 </head>
 <body>
-    <h1>Добро пожаловать!</h1>
-    <p>Тута ничего не будет</p>
+    <h1>Мои работы:</h1>
+    {% if works %}
+        <table border="1">
+            <tr>
+                <th>Название работы</th>
+                <th>Описание</th>
+                <th>Дата создания</th>
+            </tr>
+            {% for work in works %}
+                <tr>
+                    <td>{{ work.job_title }}</td>
+                    <td>{{ work.description }}</td>
+                    <td>{{ work.created_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>Нет ни одной работы.</p>
+    {% endif %}
 </body>
 </html>

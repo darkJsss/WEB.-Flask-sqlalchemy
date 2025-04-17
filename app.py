@@ -34,6 +34,7 @@ def register():
         return redirect('/login')
     return render_template('register.html', title='Регистрация', form=form)
 
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -43,9 +44,10 @@ def login():
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
             works = session.query(Work).filter(Work.user_id == current_user.id).all()
+
             return render_template('home.html', works=works)
-    else:
-            flash('Неверная почта или пароль.', category='danger')
+        else:
+            flash('Неверный логин или пароль.', category='danger')
     return render_template('login.html', title='Авторизация', form=form)
 
 @app.route('/logout')
