@@ -88,6 +88,19 @@ def edit_work(id):
         return redirect(url_for('show_works'))
     return render_template('edit_work.html', form=form, work=work)
 
+@app.route('/delete_work/<int:id>', methods=['GET', 'POST'])
+@login_required
+def delete_work(id):
+    session = create_session()
+    work = session.get(Work, id)
+    if not ((work.user_id == current_user.id) or (current_user.id == 1)):
+        flash('Удалить работу разрешено только владельцу или капитану.', 'danger')
+        return redirect(url_for('show_works'))
+    session.delete(work)
+    session.commit()
+    flash('Работа успешно удалена.', 'success')
+    return redirect(url_for('show_works'))
+
 @app.route('/logout')
 @login_required
 def logout():
