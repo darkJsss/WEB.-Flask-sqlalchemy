@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import EmailField, PasswordField, SubmitField, BooleanField
-from wtforms.validators import DataRequired, ValidationError, EqualTo
+from wtforms import EmailField, PasswordField, SubmitField, BooleanField, StringField, TextAreaField
+from wtforms.validators import DataRequired, ValidationError, EqualTo, InputRequired
 from data.models.users_model import User
 from wtforms.validators import DataRequired, Email, Length, EqualTo
 from data.db_session import create_session
@@ -27,3 +27,9 @@ class LoginForm(FlaskForm):
     password = PasswordField('Пароль', validators=[DataRequired()])
     remember_me = BooleanField('Запомнить меня')
     submit = SubmitField('Войти')
+
+
+class AddWorkForm(FlaskForm):
+    job_title = StringField('Название работы', validators=[InputRequired(), Length(max=100)])
+    description = TextAreaField('Описание работы', validators=[Length(max=500)])
+    submit = SubmitField('Добавить работу')

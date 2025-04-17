@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Добавление работы</h1>
+
+<form method="post" action="/add_work">
+    {{ form.hidden_tag() }}
+
+    <label for="job_title">Название работы:</label><br>
+    {{ form.job_title(class="form-control") }}<br>
+    {% for error in form.job_title.errors %}
+        <small class="text-danger">{{ error }}</small><br>
+    {% endfor %}
+
+    <label for="description">Описание работы:</label><br>
+    {{ form.description(class="form-control") }}<br>
+    {% for error in form.description.errors %}
+        <small class="text-danger">{{ error }}</small><br>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-success mt-2">Добавить работу</button>
+</form>
+{% endblock %}

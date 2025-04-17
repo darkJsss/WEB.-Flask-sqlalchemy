@@ -1,6 +1,6 @@
-from flask import Flask, render_template, flash, redirect, request
+from flask import Flask, render_template, flash, redirect, request, url_for
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
-from forms import LoginForm, RegisterForm
+from forms import LoginForm, RegisterForm, AddWorkForm
 from data.models.users_model import User
 from data.models.work_model import Work
 from data.db_session import global_init, create_session
@@ -17,8 +17,11 @@ def load_user(user_id):
     return session.query(User).get(user_id)
 
 @app.route('/')
-def home():
-    return render_template('home.html')
+@login_required
+def show_works():
+    session = create_session()
+    works = session.query(Work).filter(Work.user_id == current_user.id).all()
+    return render_template('home.html', works=works)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -49,6 +52,21 @@ def login():
         else:
             flash('Неверный логин или пароль.', category='danger')
     return render_template('login.html', title='Авторизация', form=form)
+
+@app.route('/add_work', methods=['GET', 'POST'])
+@login_required
+def add_work():
+    form = AddWorkForm()
+    if form.validate_on_submit():
+        session = create_session()
+        new_work = Work(job_title=form.job_title.data,
+                        description=form.description.data,
+                        user_id=current_user.id)
+        session.add(new_work)
+        session.commit()
+        flash('Работа успешно добавлена!', 'success')
+        return redirect(url_for('show_works'))
+    return render_template('add_work.html', form=form)
 
 @app.route('/logout')
 @login_required
