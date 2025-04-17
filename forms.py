@@ -33,3 +33,8 @@ class AddWorkForm(FlaskForm):
     job_title = StringField('Название работы', validators=[InputRequired(), Length(max=100)])
     description = TextAreaField('Описание работы', validators=[Length(max=500)])
     submit = SubmitField('Добавить работу')
+
+class EditWorkForm(FlaskForm):
+    job_title = StringField('Название работы', validators=[InputRequired(), Length(max=100)])
+    description = TextAreaField('Описание работы', validators=[Length(max=500)])
+    submit = SubmitField('Обновить работу')

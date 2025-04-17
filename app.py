@@ -1,6 +1,6 @@
 from flask import Flask, render_template, flash, redirect, request, url_for
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
-from forms import LoginForm, RegisterForm, AddWorkForm
+from forms import LoginForm, RegisterForm, AddWorkForm, EditWorkForm
 from data.models.users_model import User
 from data.models.work_model import Work
 from data.db_session import global_init, create_session
@@ -67,6 +67,26 @@ def add_work():
         flash('Работа успешно добавлена!', 'success')
         return redirect(url_for('show_works'))
     return render_template('add_work.html', form=form)
+
+@app.route('/edit_work/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_work(id):
+    session = create_session()
+    work = session.get(Work, id)
+    if not ((work.user_id == current_user.id) or (current_user.id == 1)):
+        flash('Доступ запрещён.', 'danger')
+        return redirect(url_for('show_works'))
+    form = EditWorkForm()
+    if request.method == 'GET':
+        form.job_title.data = work.job_title
+        form.description.data = work.description
+    elif form.validate_on_submit():
+        work.job_title = form.job_title.data
+        work.description = form.description.data
+        session.commit()
+        flash('Работа успешно обновлена!', 'success')
+        return redirect(url_for('show_works'))
+    return render_template('edit_work.html', form=form, work=work)
 
 @app.route('/logout')
 @login_required
