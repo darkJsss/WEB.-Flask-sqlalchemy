@@ -11,6 +11,7 @@ class User(SqlAlchemyBase, UserMixin):
     email = Column(String, unique=True, nullable=False)
     hashed_password = Column(String, nullable=False)
     is_active = Column(Boolean, default=True)
+    works = relationship("Work", back_populates="user")
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)

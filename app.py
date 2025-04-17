@@ -2,6 +2,7 @@ from flask import Flask, render_template, flash, redirect, request
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 from forms import LoginForm, RegisterForm
 from data.models.users_model import User
+from data.models.work_model import Work
 from data.db_session import global_init, create_session
 
 app = Flask(__name__)
@@ -41,9 +42,9 @@ def login():
         user = session.query(User).filter(User.email == form.email.data).first()
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
-            next_page = request.args.get('next')
-            return redirect(next_page or '/')
-        else:
+            works = session.query(Work).filter(Work.user_id == current_user.id).all()
+            return render_template('home.html', works=works)
+    else:
             flash('Неверная почта или пароль.', category='danger')
     return render_template('login.html', title='Авторизация', form=form)
 
